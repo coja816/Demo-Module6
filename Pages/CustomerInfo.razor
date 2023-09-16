@@ -1,0 +1,80 @@
+﻿@page "/CustomerInfo"
+@using Demo_Module6.Models
+@inject CustMasterTblService CustomerService
+
+
+<h3>CustomerInfo</h3>
+
+//Step 2: we set up our header and search parameters with 2 Input boxes and a search
+//button
+<h3>Customer Details</h3>
+<table class="table">
+    <tr style="height: 30px; background-color:#336699 ; color:#FFFFFF ;border: solid 1px
+#659EC7;">
+        <td colspan="5" align="left">
+            Search Customer
+        </td>
+    </tr>
+    <tr>
+        <td>Cust Code:</td>
+        <td>
+            <input type="text" @bind-value="@CustCD" />
+        </td>
+        <td>Cust Name:</td>
+        <td>
+            <input type="text" @bind-value="@Custname" />
+        </td>
+        <td>
+            <input type="button" class="btn-link" value="Search" @onclick="@searchDetails" />
+        </td>
+    </tr>
+</table>
+//Step 3: we bind the result in a table. Also adding our obligatory loading feature
+//till it pulls data.
+@if (custDetails == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Customer Code</th>
+                <th>Customer Name</th>
+                <th>Email</th>
+                <th>Phone No</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in custDetails)
+            {
+                <tr>
+                    <td>@forecast.CustCd</td>
+                    <td>@forecast.CustName</td>
+                    <td>@forecast.Email</td>
+                    <td>@forecast.PhoneNo</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+//Step 4: The function part to get the service result and bind the result in an
+//array as well as creating a function to search and bind the result when the button
+//is clicked. First we declare the array and the declared variables for the search,
+//next with the OnInitializedAsync we get the customerService result and bind the
+//result in the itemArrays.
+@code {
+    CustMasterTbl[] custDetails;
+    String CustCD = "";
+    String Custname = "";
+    protected override async Task OnInitializedAsync()
+    {
+        custDetails = await CustomerService.GetCusttomerAync(CustCD, Custname);
+    }
+    //SearchCustomer
+    async Task searchDetails()
+    {
+        custDetails = await CustomerService.GetCusttomerAync(CustCD, Custname);
+    }
+}
